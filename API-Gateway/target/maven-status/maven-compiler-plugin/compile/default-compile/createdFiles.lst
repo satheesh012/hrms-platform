@@ -1,0 +1,4 @@
+com\tvm\config\GatewaySecurityConfig.class
+com\tvm\util\JwtUtil.class
+com\tvm\ApiGatewayApplication.class
+com\tvm\filter\JwtAuthFilter.class
