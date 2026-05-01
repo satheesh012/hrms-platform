@@ -1,5 +1,7 @@
 target/
 *.jar
+*.class
 *.log
 .idea/
 node_modules/
+*.iml
