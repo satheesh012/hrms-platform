@@ -18,8 +18,35 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Build all services
-        run: mvn clean install -DskipTests
+      - name: Build API Gateway
+        run: mvn -f API-Gateway/pom.xml clean package -DskipTests
+
+      - name: Build Attendance Service
+        run: mvn -f Attendance-Service/pom.xml clean package -DskipTests
+
+      - name: Build Auth Service
+        run: mvn -f Auth-Service/pom.xml clean package -DskipTests
+
+      - name: Build Employee Service
+        run: mvn -f Employee-Service/pom.xml clean package -DskipTests
+
+      - name: Build Department Service
+        run: mvn -f Department-Service/pom.xml clean package -DskipTests
+
+      - name: Build Leave Service
+        run: mvn -f Leave-Service/pom.xml clean package -DskipTests
+
+      - name: Build Notification Service
+        run: mvn -f Notification-Service/pom.xml clean package -DskipTests
+
+      - name: Build Payroll Service
+        run: mvn -f Payroll-Service/pom.xml clean package -DskipTests
+
+      - name: Build Scheduler Service
+        run: mvn -f Scheduler-Service/pom.xml clean package -DskipTests
+
+      - name: Build Service Registry
+        run: mvn -f Service-Registry/pom.xml clean package -DskipTests
 
       - name: Build Docker images
         run: |
@@ -33,6 +60,14 @@ jobs:
           docker build --no-cache -t payroll-service ./Payroll-Service
           docker build --no-cache -t scheduler-service ./Scheduler-Service
           docker build --no-cache -t service-registry ./Service-Registry
+
+      - name: Verify JAR files
+        run: |
+          ls -la API-Gateway/target
+          ls -la Attendance-Service/target
+          ls -la Auth-Service/target
+          ls -la Department-Service/target
+          ls -la Employee-Service/target
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
