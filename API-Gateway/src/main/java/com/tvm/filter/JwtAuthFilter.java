@@ -25,7 +25,8 @@ public class JwtAuthFilter implements GlobalFilter {
         if (path.startsWith("/auth-service/api/users/register") ||
                 path.startsWith("/auth-service/auth/login") ||
                 path.startsWith("/api/users/register") ||
-                path.startsWith("/auth/login")) {
+                path.startsWith("/auth/login") ||
+                path.startsWith("/actuator/")) {
             System.out.println(">>> Skipping Auth for: " + path);
             return chain.filter(exchange);
         }

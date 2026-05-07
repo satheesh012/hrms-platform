@@ -33,6 +33,28 @@ cron:
   reminders:
     leaves: "*/30 * * * * ?"
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
 logging:
   level:
     org.springframework.cloud.openfeign: DEBUG

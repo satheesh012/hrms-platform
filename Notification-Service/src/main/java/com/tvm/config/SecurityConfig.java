@@ -27,6 +27,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/actuator/**").permitAll()
                         // Only ADMIN / HR can trigger notifications programmatically
                         .requestMatchers("/api/notifications/**").hasAnyRole("ADMIN", "HR")
                         .anyRequest().authenticated()

@@ -27,7 +27,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-
+                        .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/api/leaves/reminders/pending").hasAnyRole("ADMIN","HR")
                         // Apply (employee, hr, admin) - precise self-access enforced in @PreAuthorize
                         .requestMatchers(HttpMethod.POST, "/api/leaves/apply").hasAnyRole("EMPLOYEE","HR","ADMIN")
