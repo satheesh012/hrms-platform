@@ -77,32 +77,32 @@ jobs:
 
       - name: Push images
         run: |
-          docker tag api-gateway ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest
+          docker tag api-gateway ${{ secrets.DOCKER_USERNAME }}/api-gateway:${{ github.run_number }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/api-gateway:${{ github.run_number }}
 
-          docker tag attendance-service ${{ secrets.DOCKER_USERNAME }}/attendance-service:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/attendance-service:latest
+          docker tag attendance-service ${{ secrets.DOCKER_USERNAME }}/attendance-service:${{ github.run_number }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/attendance-service:${{ github.run_number }}
 
-          docker tag auth-service ${{ secrets.DOCKER_USERNAME }}/auth-service:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/auth-service:latest
+          docker tag auth-service ${{ secrets.DOCKER_USERNAME }}/auth-service:${{ github.run_number }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/auth-service:${{ github.run_number }}
 
-          docker tag department-service ${{ secrets.DOCKER_USERNAME }}/department-service:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/department-service:latest
+          docker tag department-service ${{ secrets.DOCKER_USERNAME }}/department-service:${{ github.run_number }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/department-service:${{ github.run_number }}
 
-          docker tag employee-service ${{ secrets.DOCKER_USERNAME }}/employee-service:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/employee-service:latest
+          docker tag employee-service ${{ secrets.DOCKER_USERNAME }}/employee-service:${{ github.run_number }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/employee-service:${{ github.run_number }}
 
-          docker tag leave-service ${{ secrets.DOCKER_USERNAME }}/leave-service:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/leave-service:latest
+          docker tag leave-service ${{ secrets.DOCKER_USERNAME }}/leave-service:${{ github.run_number }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/leave-service:${{ github.run_number }}
 
-          docker tag notification-service ${{ secrets.DOCKER_USERNAME }}/notification-service:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/notification-service:latest
+          docker tag notification-service ${{ secrets.DOCKER_USERNAME }}/notification-service:${{ github.run_number }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/notification-service:${{ github.run_number }}
 
-          docker tag payroll-service ${{ secrets.DOCKER_USERNAME }}/payroll-service:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/payroll-service:latest
+          docker tag payroll-service ${{ secrets.DOCKER_USERNAME }}/payroll-service:${{ github.run_number }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/payroll-service:${{ github.run_number }}
 
-          docker tag scheduler-service ${{ secrets.DOCKER_USERNAME }}/scheduler-service:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/scheduler-service:latest
+          docker tag scheduler-service ${{ secrets.DOCKER_USERNAME }}/scheduler-service:${{ github.run_number }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/scheduler-service:${{ github.run_number }}
 
-          docker tag service-registry ${{ secrets.DOCKER_USERNAME }}/service-registry:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/service-registry:latest
+          docker tag service-registry ${{ secrets.DOCKER_USERNAME }}/service-registry:${{ github.run_number }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/service-registry:${{ github.run_number }}
