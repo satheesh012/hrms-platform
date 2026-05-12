@@ -67,3 +67,34 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/payroll-service:$TAG
           docker push ${{ secrets.DOCKER_USERNAME }}/scheduler-service:$TAG
           docker push ${{ secrets.DOCKER_USERNAME }}/service-registry:$TAG
+          
+      - name: Checkout hrms-k8s repo
+        uses: actions/checkout@v4
+        with:
+          repository: satheesh012/hrms-k8s
+          token: ${{ secrets.GH_PAT }}
+          path: hrms-k8s
+          
+      - name: Update image tags
+        run: |
+          sed -i "s|image: satheesh012/api-gateway:.*|image: satheesh012/api-gateway:${TAG}|g" hrms-k8s/apps/api-gateway/api-gateway-deployment.yaml
+          sed -i "s|image: satheesh012/attendance-service:.*|image: satheesh012/attendance-service:${TAG}|g" hrms-k8s/apps/attendance-service/attendance-service-deployment.yaml
+          sed -i "s|image: satheesh012/auth-service:.*|image: satheesh012/auth-service:${TAG}|g" hrms-k8s/apps/auth-service/auth-service-deployment.yaml
+          sed -i "s|image: satheesh012/employee-service:.*|image: satheesh012/employee-service:${TAG}|g" hrms-k8s/apps/employee-service/employee-service-deployment.yaml
+          sed -i "s|image: satheesh012/department-service:.*|image: satheesh012/department-service:${TAG}|g" hrms-k8s/apps/department-service/department-service-deployment.yaml
+          sed -i "s|image: satheesh012/leave-service:.*|image: satheesh012/leave-service:${TAG}|g" hrms-k8s/apps/leave-service/leave-service-deployment.yaml
+          sed -i "s|image: satheesh012/notification-service:.*|image: satheesh012/notification-service:${TAG}|g" hrms-k8s/apps/notification-service/notification-service-deployment.yaml
+          sed -i "s|image: satheesh012/payroll-service:.*|image: satheesh012/payroll-service:${TAG}|g" hrms-k8s/apps/payroll-service/payroll-service-deployment.yaml
+          sed -i "s|image: satheesh012/scheduler-service:.*|image: satheesh012/scheduler-service:${TAG}|g" hrms-k8s/apps/scheduler-service/scheduler-service-deployment.yaml
+          sed -i "s|image: satheesh012/service-registry:.*|image: satheesh012/service-registry:${TAG}|g" hrms-k8s/apps/service-registry/registry-deployment.yaml
+          
+      - name: Commit and Push changes
+        run: |
+          cd hrms-k8s
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git add .
+          git commit -m "Update image tags to ${TAG}" || echo "No changes"
+
+          git push

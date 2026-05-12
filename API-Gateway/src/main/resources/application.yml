@@ -12,7 +12,7 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: true
+          enabled: false
           lower-case-service-id: true
 
       default-filters:
@@ -21,20 +21,40 @@ spring:
         - PreserveHostHeader
 
       routes:
-        - id: auth-service
-          uri: lb://auth-service
-          predicates:
-            - Path=/auth-service/**
-
-        - id: employee-service
-          uri: lb://employee-service
-          predicates:
-            - Path=/employee-service/**
-
         - id: attendance-service
           uri: lb://attendance-service
           predicates:
             - Path=/api/attendance/**
+
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**,/api/users/**
+
+        - id: department-service
+          uri: lb://department-service
+          predicates:
+            - Path=/api/departments/**
+
+        - id: employee-service
+          uri: lb://employee-service
+          predicates:
+            - Path=/api/employees/**
+
+        - id: leave-service
+          uri: lb://leave-service
+          predicates:
+            - Path=/api/leaves/**
+
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/notifications/**
+
+        - id: payroll-service
+          uri: lb://payroll-service
+          predicates:
+            - Path=/api/payroll/**
 
 management:
   endpoints:

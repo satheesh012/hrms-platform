@@ -34,7 +34,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/auth/login", "/api/users/register", "/error", "/actuator/**").permitAll()
+                        .requestMatchers("/auth/login", "/api/users/register", "/error", "/actuator/**","/test/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Preflight requests
                         .anyRequest().authenticated()
                 )
