@@ -67,16 +67,3 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/payroll-service:$TAG
           docker push ${{ secrets.DOCKER_USERNAME }}/scheduler-service:$TAG
           docker push ${{ secrets.DOCKER_USERNAME }}/service-registry:$TAG
-          
-      - name: Replace image tag
-        run: |
-          sed -i "s/IMAGE_TAG/${{ github.sha }}/g" apps/api-gateway/api-gateway-deployment.yaml
-          sed -i "s/IMAGE_TAG/${{ github.sha }}/g" apps/attendance-service/attendance-deployment.yaml
-          sed -i "s/IMAGE_TAG/${{ github.sha }}/g" apps/auth-service/auth-deployment.yaml
-          sed -i "s/IMAGE_TAG/${{ github.sha }}/g" apps/employee-service/employee-deployment.yaml
-          sed -i "s/IMAGE_TAG/${{ github.sha }}/g" apps/department-service/department-deployment.yaml
-          sed -i "s/IMAGE_TAG/${{ github.sha }}/g" apps/leave-service/leave-deployment.yaml
-          sed -i "s/IMAGE_TAG/${{ github.sha }}/g" apps/notification-service/notification-deployment.yaml
-          sed -i "s/IMAGE_TAG/${{ github.sha }}/g" apps/payroll-service/payroll-deployment.yaml
-          sed -i "s/IMAGE_TAG/${{ github.sha }}/g" apps/scheduler-service/scheduler-deployment.yaml
-          sed -i "s/IMAGE_TAG/${{ github.sha }}/g" apps/service-registry/registry-deployment.yaml
