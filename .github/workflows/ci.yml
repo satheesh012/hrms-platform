@@ -17,24 +17,62 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 1. Detect which microservice folders were modified in this commit
+      - name: Detect Changed Services
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            api-gateway:
+              - 'API-Gateway/**'
+              - 'pom.xml'
+            attendance-service:
+              - 'Attendance-Service/**'
+              - 'pom.xml'
+            auth-service:
+              - 'Auth-Service/**'
+              - 'pom.xml'
+            employee-service:
+              - 'Employee-Service/**'
+              - 'pom.xml'
+            department-service:
+              - 'Department-Service/**'
+              - 'pom.xml'
+            leave-service:
+              - 'Leave-Service/**'
+              - 'pom.xml'
+            notification-service:
+              - 'Notification-Service/**'
+              - 'pom.xml'
+            payroll-service:
+              - 'Payroll-Service/**'
+              - 'pom.xml'
+            scheduler-service:
+              - 'Scheduler-Service/**'
+              - 'pom.xml'
+            service-registry:
+              - 'Service-Registry/**'
+              - 'pom.xml'
+
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      - name: Build Services
+      # 2. Only build JARs for services that actually changed
+      - name: Build Changed Services
         run: |
-          mvn -f API-Gateway/pom.xml clean package -DskipTests
-          mvn -f Attendance-Service/pom.xml clean package -DskipTests
-          mvn -f Auth-Service/pom.xml clean package -DskipTests
-          mvn -f Employee-Service/pom.xml clean package -DskipTests
-          mvn -f Department-Service/pom.xml clean package -DskipTests
-          mvn -f Leave-Service/pom.xml clean package -DskipTests
-          mvn -f Notification-Service/pom.xml clean package -DskipTests
-          mvn -f Payroll-Service/pom.xml clean package -DskipTests
-          mvn -f Scheduler-Service/pom.xml clean package -DskipTests
-          mvn -f Service-Registry/pom.xml clean package -DskipTests
+          if [ "${{ steps.changes.outputs.api-gateway }}" == "true" ]; then mvn -f API-Gateway/pom.xml clean package -DskipTests; fi
+          if [ "${{ steps.changes.outputs.attendance-service }}" == "true" ]; then mvn -f Attendance-Service/pom.xml clean package -DskipTests; fi
+          if [ "${{ steps.changes.outputs.auth-service }}" == "true" ]; then mvn -f Auth-Service/pom.xml clean package -DskipTests; fi
+          if [ "${{ steps.changes.outputs.employee-service }}" == "true" ]; then mvn -f Employee-Service/pom.xml clean package -DskipTests; fi
+          if [ "${{ steps.changes.outputs.department-service }}" == "true" ]; then mvn -f Department-Service/pom.xml clean package -DskipTests; fi
+          if [ "${{ steps.changes.outputs.leave-service }}" == "true" ]; then mvn -f Leave-Service/pom.xml clean package -DskipTests; fi
+          if [ "${{ steps.changes.outputs.notification-service }}" == "true" ]; then mvn -f Notification-Service/pom.xml clean package -DskipTests; fi
+          if [ "${{ steps.changes.outputs.payroll-service }}" == "true" ]; then mvn -f Payroll-Service/pom.xml clean package -DskipTests; fi
+          if [ "${{ steps.changes.outputs.scheduler-service }}" == "true" ]; then mvn -f Scheduler-Service/pom.xml clean package -DskipTests; fi
+          if [ "${{ steps.changes.outputs.service-registry }}" == "true" ]; then mvn -f Service-Registry/pom.xml clean package -DskipTests; fi
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -42,20 +80,23 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build Images
+      # 3. Only build Docker images for services that changed
+      - name: Build Changed Images
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/api-gateway:$TAG ./API-Gateway
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/attendance-service:$TAG ./Attendance-Service
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/auth-service:$TAG ./Auth-Service
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/employee-service:$TAG ./Employee-Service
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/department-service:$TAG -f ./Department-Service/Dockerfile .
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/leave-service:$TAG ./Leave-Service
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/notification-service:$TAG ./Notification-Service
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/payroll-service:$TAG ./Payroll-Service
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/scheduler-service:$TAG ./Scheduler-Service
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/service-registry:$TAG ./Service-Registry
+          if [ "${{ steps.changes.outputs.api-gateway }}" == "true" ]; then docker build -t ${{ secrets.DOCKER_USERNAME }}/api-gateway:$TAG ./API-Gateway; fi
+          if [ "${{ steps.changes.outputs.attendance-service }}" == "true" ]; then docker build -t ${{ secrets.DOCKER_USERNAME }}/attendance-service:$TAG ./Attendance-Service; fi
+          if [ "${{ steps.changes.outputs.auth-service }}" == "true" ]; then docker build -t ${{ secrets.DOCKER_USERNAME }}/auth-service:$TAG ./Auth-Service; fi
+          if [ "${{ steps.changes.outputs.employee-service }}" == "true" ]; then docker build -t ${{ secrets.DOCKER_USERNAME }}/employee-service:$TAG ./Employee-Service; fi
+          if [ "${{ steps.changes.outputs.department-service }}" == "true" ]; then docker build -t ${{ secrets.DOCKER_USERNAME }}/department-service:$TAG -f ./Department-Service/Dockerfile .; fi
+          if [ "${{ steps.changes.outputs.leave-service }}" == "true" ]; then docker build -t ${{ secrets.DOCKER_USERNAME }}/leave-service:$TAG ./Leave-Service; fi
+          if [ "${{ steps.changes.outputs.notification-service }}" == "true" ]; then docker build -t ${{ secrets.DOCKER_USERNAME }}/notification-service:$TAG ./Notification-Service; fi
+          if [ "${{ steps.changes.outputs.payroll-service }}" == "true" ]; then docker build -t ${{ secrets.DOCKER_USERNAME }}/payroll-service:$TAG ./Payroll-Service; fi
+          if [ "${{ steps.changes.outputs.scheduler-service }}" == "true" ]; then docker build -t ${{ secrets.DOCKER_USERNAME }}/scheduler-service:$TAG ./Scheduler-Service; fi
+          if [ "${{ steps.changes.outputs.service-registry }}" == "true" ]; then docker build -t ${{ secrets.DOCKER_USERNAME }}/service-registry:$TAG ./Service-Registry; fi
 
+      # 4. Trivy security scan on changed services
       - name: Run Trivy Vulnerability Scanner (Department Service)
+        if: steps.changes.outputs.department-service == 'true'
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ secrets.DOCKER_USERNAME }}/department-service:${{ env.TAG }}
@@ -65,39 +106,61 @@ jobs:
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
 
-      - name: Push Images
+      # 5. Only push images that were actually rebuilt
+      - name: Push Changed Images
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/api-gateway:$TAG
-          docker push ${{ secrets.DOCKER_USERNAME }}/attendance-service:$TAG
-          docker push ${{ secrets.DOCKER_USERNAME }}/auth-service:$TAG
-          docker push ${{ secrets.DOCKER_USERNAME }}/employee-service:$TAG
-          docker push ${{ secrets.DOCKER_USERNAME }}/department-service:$TAG
-          docker push ${{ secrets.DOCKER_USERNAME }}/leave-service:$TAG
-          docker push ${{ secrets.DOCKER_USERNAME }}/notification-service:$TAG
-          docker push ${{ secrets.DOCKER_USERNAME }}/payroll-service:$TAG
-          docker push ${{ secrets.DOCKER_USERNAME }}/scheduler-service:$TAG
-          docker push ${{ secrets.DOCKER_USERNAME }}/service-registry:$TAG
-          
+          if [ "${{ steps.changes.outputs.api-gateway }}" == "true" ]; then docker push ${{ secrets.DOCKER_USERNAME }}/api-gateway:$TAG; fi
+          if [ "${{ steps.changes.outputs.attendance-service }}" == "true" ]; then docker push ${{ secrets.DOCKER_USERNAME }}/attendance-service:$TAG; fi
+          if [ "${{ steps.changes.outputs.auth-service }}" == "true" ]; then docker push ${{ secrets.DOCKER_USERNAME }}/auth-service:$TAG; fi
+          if [ "${{ steps.changes.outputs.employee-service }}" == "true" ]; then docker push ${{ secrets.DOCKER_USERNAME }}/employee-service:$TAG; fi
+          if [ "${{ steps.changes.outputs.department-service }}" == "true" ]; then docker push ${{ secrets.DOCKER_USERNAME }}/department-service:$TAG; fi
+          if [ "${{ steps.changes.outputs.leave-service }}" == "true" ]; then docker push ${{ secrets.DOCKER_USERNAME }}/leave-service:$TAG; fi
+          if [ "${{ steps.changes.outputs.notification-service }}" == "true" ]; then docker push ${{ secrets.DOCKER_USERNAME }}/notification-service:$TAG; fi
+          if [ "${{ steps.changes.outputs.payroll-service }}" == "true" ]; then docker push ${{ secrets.DOCKER_USERNAME }}/payroll-service:$TAG; fi
+          if [ "${{ steps.changes.outputs.scheduler-service }}" == "true" ]; then docker push ${{ secrets.DOCKER_USERNAME }}/scheduler-service:$TAG; fi
+          if [ "${{ steps.changes.outputs.service-registry }}" == "true" ]; then docker push ${{ secrets.DOCKER_USERNAME }}/service-registry:$TAG; fi
+
       - name: Checkout hrms-k8s repo
         uses: actions/checkout@v4
         with:
           repository: satheesh012/hrms-k8s
           token: ${{ secrets.GH_PAT }}
           path: hrms-k8s
-          
-      - name: Update image tags
+
+      # 6. Only update GitOps tags in hrms-k8s for the services that were updated
+      - name: Update image tags in hrms-k8s
         run: |
-          sed -i "s|image: satheesh012/api-gateway:.*|image: satheesh012/api-gateway:${TAG}|g" hrms-k8s/apps/api-gateway/api-gateway-deployment.yaml
-          sed -i "s|image: satheesh012/attendance-service:.*|image: satheesh012/attendance-service:${TAG}|g" hrms-k8s/apps/attendance-service/attendance-service-deployment.yaml
-          sed -i "s|image: satheesh012/auth-service:.*|image: satheesh012/auth-service:${TAG}|g" hrms-k8s/apps/auth-service/auth-service-deployment.yaml
-          sed -i "s|image: satheesh012/employee-service:.*|image: satheesh012/employee-service:${TAG}|g" hrms-k8s/apps/employee-service/employee-service-deployment.yaml
-          sed -i "s|image: satheesh012/department-service:.*|image: satheesh012/department-service:${TAG}|g" hrms-k8s/apps/department-service/department-service-deployment.yaml
-          sed -i "s|image: satheesh012/leave-service:.*|image: satheesh012/leave-service:${TAG}|g" hrms-k8s/apps/leave-service/leave-service-deployment.yaml
-          sed -i "s|image: satheesh012/notification-service:.*|image: satheesh012/notification-service:${TAG}|g" hrms-k8s/apps/notification-service/notification-service-deployment.yaml
-          sed -i "s|image: satheesh012/payroll-service:.*|image: satheesh012/payroll-service:${TAG}|g" hrms-k8s/apps/payroll-service/payroll-service-deployment.yaml
-          sed -i "s|image: satheesh012/scheduler-service:.*|image: satheesh012/scheduler-service:${TAG}|g" hrms-k8s/apps/scheduler-service/scheduler-service-deployment.yaml
-          sed -i "s|image: satheesh012/service-registry:.*|image: satheesh012/service-registry:${TAG}|g" hrms-k8s/apps/service-registry/registry-deployment.yaml
-          
+          if [ "${{ steps.changes.outputs.api-gateway }}" == "true" ]; then
+            sed -i "s|image: satheesh012/api-gateway:.*|image: satheesh012/api-gateway:${TAG}|g" hrms-k8s/apps/api-gateway/api-gateway-deployment.yaml
+          fi
+          if [ "${{ steps.changes.outputs.attendance-service }}" == "true" ]; then
+            sed -i "s|image: satheesh012/attendance-service:.*|image: satheesh012/attendance-service:${TAG}|g" hrms-k8s/apps/attendance-service/attendance-service-deployment.yaml
+          fi
+          if [ "${{ steps.changes.outputs.auth-service }}" == "true" ]; then
+            sed -i "s|image: satheesh012/auth-service:.*|image: satheesh012/auth-service:${TAG}|g" hrms-k8s/apps/auth-service/auth-service-deployment.yaml
+          fi
+          if [ "${{ steps.changes.outputs.employee-service }}" == "true" ]; then
+            sed -i "s|image: satheesh012/employee-service:.*|image: satheesh012/employee-service:${TAG}|g" hrms-k8s/apps/employee-service/employee-service-deployment.yaml
+          fi
+          if [ "${{ steps.changes.outputs.department-service }}" == "true" ]; then
+            sed -i "s|image: satheesh012/department-service:.*|image: satheesh012/department-service:${TAG}|g" hrms-k8s/apps/department-service/department-service-deployment.yaml
+          fi
+          if [ "${{ steps.changes.outputs.leave-service }}" == "true" ]; then
+            sed -i "s|image: satheesh012/leave-service:.*|image: satheesh012/leave-service:${TAG}|g" hrms-k8s/apps/leave-service/leave-service-deployment.yaml
+          fi
+          if [ "${{ steps.changes.outputs.notification-service }}" == "true" ]; then
+            sed -i "s|image: satheesh012/notification-service:.*|image: satheesh012/notification-service:${TAG}|g" hrms-k8s/apps/notification-service/notification-service-deployment.yaml
+          fi
+          if [ "${{ steps.changes.outputs.payroll-service }}" == "true" ]; then
+            sed -i "s|image: satheesh012/payroll-service:.*|image: satheesh012/payroll-service:${TAG}|g" hrms-k8s/apps/payroll-service/payroll-service-deployment.yaml
+          fi
+          if [ "${{ steps.changes.outputs.scheduler-service }}" == "true" ]; then
+            sed -i "s|image: satheesh012/scheduler-service:.*|image: satheesh012/scheduler-service:${TAG}|g" hrms-k8s/apps/scheduler-service/scheduler-service-deployment.yaml
+          fi
+          if [ "${{ steps.changes.outputs.service-registry }}" == "true" ]; then
+            sed -i "s|image: satheesh012/service-registry:.*|image: satheesh012/service-registry:${TAG}|g" hrms-k8s/apps/service-registry/registry-deployment.yaml
+          fi
+
       - name: Commit and Push changes
         run: |
           cd hrms-k8s
